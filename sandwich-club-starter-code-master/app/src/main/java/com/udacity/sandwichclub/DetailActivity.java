@@ -16,6 +16,7 @@ public class DetailActivity extends AppCompatActivity {
 
     public static final String EXTRA_POSITION = "extra_position";
     private static final int DEFAULT_POSITION = -1;
+    protected static final String NA = "Not Available";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,16 +60,26 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void populateUI(@NonNull Sandwich sandwich) {
-        TextView placeOfOrigin = (TextView)findViewById(R.id.place_of_origin);
-        placeOfOrigin.setText(sandwich.getPlaceOfOrigin());
+        TextView placeOfOrigin = (TextView)findViewById(R.id.origin_tv);
+        String place = sandwich.getPlaceOfOrigin();
+        if (!place.isEmpty()) {
+            placeOfOrigin.setText(place);
+        } else {
+            placeOfOrigin.setText(NA);
+        }
 
-        TextView aka = (TextView)findViewById(R.id.aka);
-        aka.setText(sandwich.getAlsoKnownAs().toString());
 
-        TextView ingredients = (TextView)findViewById(R.id.ingredients);
+        TextView aka = (TextView)findViewById(R.id.also_known_tv);
+        if (sandwich.getAlsoKnownAs().size() > 0) {
+            aka.setText(sandwich.getAlsoKnownAs().toString());
+        } else {
+            aka.setText(NA);
+        }
+
+        TextView ingredients = (TextView)findViewById(R.id.ingredients_tv);
         ingredients.setText(sandwich.getIngredients().toString());
 
-        TextView description = (TextView)findViewById(R.id.description);
+        TextView description = (TextView)findViewById(R.id.description_tv);
         description.setText(sandwich.getDescription());
     }
 }
