@@ -5,7 +5,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,15 +22,16 @@ public class DetailActivity extends AppCompatActivity {
     public static final String EXTRA_POSITION = "extra_position";
     private static final int DEFAULT_POSITION = -1;
     protected static final String NA = "Not Available";
-    ContentLoadingProgressBar mProgressBar;
+    TextView mContentDescription;
+    ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        ImageView ingredientsIv = findViewById(R.id.image_iv);
-        mProgressBar = findViewById(R.id.loadingprogress);
+        final ImageView ingredientsIv = findViewById(R.id.image_iv);
+        mContentDescription = (TextView)findViewById(R.id.content_description);
 
         Intent intent = getIntent();
         if (intent == null) {
@@ -56,12 +60,17 @@ public class DetailActivity extends AppCompatActivity {
                 .into(ingredientsIv, new Callback() {
                     @Override
                     public void onSuccess() {
-                        mProgressBar.hide();
+                        // image loading finished, so remove progressbar.
+                        mProgressBar.setVisibility(View.GONE);
                     }
 
                     @Override
                     public void onError() {
-                        Toast.makeText(DetailActivity.this, R.string.detail_error_message, Toast.LENGTH_SHORT).show();
+                        // On error , while loading sandwich image, display error message.
+                        ingredientsIv.setVisibility(View.INVISIBLE);
+                        mProgressBar.setVisibility(View.GONE);
+                        mContentDescription.setText(getString(R.string.detail_image_error_message));
+                        mContentDescription.setVisibility(View.VISIBLE);
                     }
                 });
 
@@ -73,9 +82,22 @@ public class DetailActivity extends AppCompatActivity {
         Toast.makeText(this, R.string.detail_error_message, Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Helper method to trim first and last characters from input string.
+     * @param input
+     * @return
+     */
+    private String trimStartAndEndChars(@NonNull String input) {
+        char trimmed[] = new char[input.length()-2];
+        input.getChars(1,input.length()-1,trimmed,0);
+        return String.valueOf(trimmed);
+    }
+
     private void populateUI(@NonNull Sandwich sandwich) {
-        mProgressBar.show();
+        // Load views, from model object
         TextView placeOfOrigin = (TextView)findViewById(R.id.origin_tv);
+        mProgressBar = (ProgressBar) findViewById(R.id.loadingprogress);
+        mProgressBar.setVisibility(View.VISIBLE);
         String place = sandwich.getPlaceOfOrigin();
         if (!place.isEmpty()) {
             placeOfOrigin.setText(place);
@@ -83,16 +105,21 @@ public class DetailActivity extends AppCompatActivity {
             placeOfOrigin.setText(NA);
         }
 
-
-        TextView aka = (TextView)findViewById(R.id.also_known_tv);
+        TextView akaTextView = (TextView)findViewById(R.id.also_known_tv);
         if (sandwich.getAlsoKnownAs().size() > 0) {
-            aka.setText(sandwich.getAlsoKnownAs().toString());
+            String akaString = sandwich.getAlsoKnownAs().toString();
+            akaTextView.setText(trimStartAndEndChars(akaString));
         } else {
-            aka.setText(NA);
+            akaTextView.setText(NA);
         }
 
         TextView ingredients = (TextView)findViewById(R.id.ingredients_tv);
-        ingredients.setText(sandwich.getIngredients().toString());
+        if (sandwich.getIngredients().size() > 0) {
+            String ingredientsStr = sandwich.getIngredients().toString();
+            ingredients.setText(trimStartAndEndChars(ingredientsStr));
+        } else {
+            ingredients.setText(NA);
+        }
 
         TextView description = (TextView)findViewById(R.id.description_tv);
         description.setText(sandwich.getDescription());

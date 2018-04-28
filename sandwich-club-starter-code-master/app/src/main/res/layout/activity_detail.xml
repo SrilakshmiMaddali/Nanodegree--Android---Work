@@ -12,10 +12,14 @@
         android:adjustViewBounds="true"
         android:contentDescription="@string/sandwich_picture_content_description"
         android:scaleType="centerCrop" />
-    <android.support.v4.widget.ContentLoadingProgressBar
-        android:id="@+id/loadingprogress"
+    <TextView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorPrimaryDark"
+        android:visibility="gone"
+        android:textStyle="bold"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/content_description"/>
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -24,7 +28,15 @@
         android:id="@+id/content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
         android:orientation="vertical">
+        <ProgressBar
+            android:id="@+id/loadingprogress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:foregroundGravity="center_horizontal"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
