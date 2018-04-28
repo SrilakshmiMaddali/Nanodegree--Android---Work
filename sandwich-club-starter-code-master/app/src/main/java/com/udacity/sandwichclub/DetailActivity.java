@@ -12,6 +12,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.udacity.sandwichclub.model.Sandwich;
@@ -22,13 +24,16 @@ public class DetailActivity extends AppCompatActivity {
     public static final String EXTRA_POSITION = "extra_position";
     private static final int DEFAULT_POSITION = -1;
     protected static final String NA = "Not Available";
+    @BindView(R.id.content_description)
     TextView mContentDescription;
+    @BindView(R.id.loadingprogress)
     ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+        ButterKnife.bind(this);
 
         final ImageView ingredientsIv = findViewById(R.id.image_iv);
         mContentDescription = (TextView)findViewById(R.id.content_description);
@@ -96,7 +101,6 @@ public class DetailActivity extends AppCompatActivity {
     private void populateUI(@NonNull Sandwich sandwich) {
         // Load views, from model object
         TextView placeOfOrigin = (TextView)findViewById(R.id.origin_tv);
-        mProgressBar = (ProgressBar) findViewById(R.id.loadingprogress);
         mProgressBar.setVisibility(View.VISIBLE);
         String place = sandwich.getPlaceOfOrigin();
         if (!place.isEmpty()) {
